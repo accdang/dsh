@@ -114,3 +114,15 @@ node tools/check-compat.mjs
 `
 
 全部 ✓ 才继续用；有 ✗ 就 git diff 看被覆盖了什么。插件自身的 update.autoCheck 已关，避免误点更新把补丁覆盖掉。
+## 十、刷视频去同质化（2026-11-13 补）
+
+起因：她一直刷到「火影忍者手游」，被首页推荐锁死在一个题材里。
+
+| 文件 | 改动 |
+|---|---|
+| `lib/config-platforms.js` | `browse.styles`（风格轮换词）、`browse.blockKeywords`（屏蔽词） |
+| `lib/browse.js` | `nextStyleKeyword()`：每轮按游标轮换一个风格词去搜（轮完从头开始，不连续重复）；`blocked()` 在候选池和 `watch()` 两处过滤屏蔽词 |
+| `lib/routes.js` | 状态和保存路由都带上这两个数组（漏一处就会被设置页保存冲掉） |
+| `lib/client.js` | 「平台 → B站 → 刷视频」新增「风格轮换」「不看的」两行 |
+
+默认值（已写入 config）：styles = 美食/风景/音乐/运动/哲理/科普/手工/宠物/治愈/旅行；blockKeywords = 火影忍者手游、火影手游。
