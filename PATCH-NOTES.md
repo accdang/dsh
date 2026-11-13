@@ -126,3 +126,15 @@ node tools/check-compat.mjs
 | `lib/client.js` | 「平台 → B站 → 刷视频」新增「风格轮换」「不看的」两行 |
 
 默认值（已写入 config）：styles = 美食/风景/音乐/运动/哲理/科普/手工/宠物/治愈/旅行；blockKeywords = 火影忍者手游、火影手游。
+### 十-B、改成「她自己挑」（2026-11-13，取代轮换）
+
+用户要求：不设不该看的（除不健康内容），把 B站 全部分区交给她，按她自己的喜好选。
+
+| 文件 | 改动 |
+|---|---|
+| `lib/browse.js` | `askHerStyle()`：把 36 个分区 + 最近刷到/搜过的摊给模型，让她挑一个真想看的方向（可以是分区，也可以更具体，如「海边日落」）；她说 [不想看] 就这轮不搜。`nextStyleKeyword()` 先问她，失败才从分区加权随机（避开最近搜过的） |
+| `lib/browse.js` | `UNSAFE_RE`：只拦明显擦边/成人/身体猎奇；游戏、鬼畜、综艺、时尚美妆这些正常题材一律不拦 |
+| `lib/config-platforms.js` | `styles` 默认 = B站 全部分区（36 项）；`blockKeywords` 默认空（只留用户自定义） |
+| `lib/client.js` | 文案改为「想看的方向」「额外不看的」 |
+
+config 已写入：styles = 全部分区、blockKeywords = []、searchPerDay = 3。
