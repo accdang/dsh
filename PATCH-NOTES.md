@@ -97,3 +97,20 @@
 | `lib/gateway.js` `retireSession()` | 手动重开：按 channelId 把该聊天的会话归档，下一条消息开新的 |
 | `lib/routes.js` | `POST /sessions/rotate`（`{channelId}`）、`POST /sessions/rotate-days`（`{rotateDays}`）；state 带 `rotateDays` |
 | `lib/client.js` | 「平台 → 会话」：自动轮换天数 + 每个聊天一个「重开」按钮 |
+## 基线版本（升级前对照）
+
+| 组件 | 版本 |
+|---|---|
+| DSH Desktop | 0.2.0-rc.2 |
+| dsh-fish-soul | 0.15.46（file: 依赖指向本目录） |
+| Node | 24.22.1 |
+| dsh-recall-plugin | 2.6.5 |
+| dsh-boot-suite | 2.16.13 |
+
+升级 DSH 或点了插件的「更新」之后，先跑：
+
+`
+node tools/check-compat.mjs
+`
+
+全部 ✓ 才继续用；有 ✗ 就 git diff 看被覆盖了什么。插件自身的 update.autoCheck 已关，避免误点更新把补丁覆盖掉。
