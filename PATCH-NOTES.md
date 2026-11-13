@@ -84,7 +84,16 @@
 
 ## 已知未做
 
-- **embedding 没配** → 只有 BM25，语义召回缺失（常驻底色是止血）
-- 会话轮换（自动 / 手动重开）
+- **embedding 没配** → 只有 BM25，语义召回缺失（常驻底色是止血）；配了之后要重算全部向量
 - `collect_image` 没有图片搜索能力，只能收已看到的直链
 - 抖音通路仍未启用
+
+## 九、会话轮换（2026-11-13 补）
+
+| 文件 | 改动 |
+|---|---|
+| `lib/config-schema.js` | `sessions.rotateDays`（0 = 不轮换） |
+| `lib/gateway.js` `ensureSession()` | 会话存在天数超过 `rotateDays` → 标 retired + 新建（记忆不动，最近 4 句仍会带过去） |
+| `lib/gateway.js` `retireSession()` | 手动重开：按 channelId 把该聊天的会话归档，下一条消息开新的 |
+| `lib/routes.js` | `POST /sessions/rotate`（`{channelId}`）、`POST /sessions/rotate-days`（`{rotateDays}`）；state 带 `rotateDays` |
+| `lib/client.js` | 「平台 → 会话」：自动轮换天数 + 每个聊天一个「重开」按钮 |
