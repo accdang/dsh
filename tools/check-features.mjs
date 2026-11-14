@@ -7,8 +7,9 @@
  * 不写库、不发消息、不点赞，纯读 + 一次 B站 只读接口。
  */
 import { DatabaseSync } from 'node:sqlite';
-import { existsSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { join, resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const home = process.env.USERPROFILE ?? process.env.HOME ?? '';
 const soul = join(home, '.dsh', 'fish-soul', 'soul.db');
@@ -104,14 +105,25 @@ try {
 
 // ── B站 只读接口 ──
 try {
-	const { BiliClient } = await import('file:///C:/Users/path/dsh-fish-soul-vendored/lib/channels/bilibili.js');
+	// 插件目录：默认按本脚本所在仓库，可用环境变量覆盖（别在源码里写死本机路径）
+	const vendored = process.env.FISH_SOUL_VENDORED ?? resolve(dirname(fileURLToPath(import.meta.url)), '..');
+	const { pathToFileURL } = await import('node:url');
+	const { BiliClient } = await import(pathToFileURL(join(vendored, 'lib', 'channels', 'bilibili.js')).href);
 	const c = new BiliClient({ log: () => {} });
 	if (c.loggedIn !== true) skip('B站 接口', '没登录');
 	else {
 		const v = await c.view('BV1g7Wh6vEk7');
 		ok('B站 看视频', `《${String(v.title).slice(0, 16)}》`);
-		const likes = await c.userLikes('1000000001', 3);
-		ok('B站 读点赞', `${likes.length} 条`);
+		// 主人的 UID 从配置读，源码里不写死
+		let masterUid = '';
+		try {
+			masterUid = String(JSON.parse(readFileSync(cfgPath, 'utf8')).bili?.masterUid ?? '');
+		} catch { masterUid = ''; }
+		if (masterUid === '') skip('B站 读点赞', '没配 masterUid');
+		else {
+			const likes = await c.userLikes(masterUid, 3);
+			ok('B站 读点赞', `${likes.length} 条`);
+		}
 	}
 } catch (error) {
 	bad('B站 接口', String(error.message ?? error).slice(0, 50));

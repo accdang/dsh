@@ -1,7 +1,7 @@
 # 补丁清单（本机改动）
 
 基线：`dsh-fish-soul@0.15.46`（npm 原样）+ 下列补丁。
-插件本体在 `C:\Users\path\dsh-fish-soul-vendored`，以 `file:` 依赖挂进 `~/.dsh/profiles/desktop`。
+插件本体在 `<本机插件目录>`，以 `file:` 依赖挂进 `~/.dsh/profiles/desktop`。
 
 > 教训：改完一个点就重启一次 DSH 验一个点 —— 这批改动是叠着做的，验证归因很费劲。
 
@@ -97,7 +97,7 @@ node tools/check-features.mjs    # 原有功能活不活（只读）
 | 位置 | 改动 |
 |---|---|
 | `~/.dsh/profiles/desktop/cordis.patch.yml` | `id: recall` 覆盖 `baseExcludes`（默认 26 项 + `.pnpm-store/` `.npm-cache/` `*.jar` `*.log`），解决工作区 1.27GB 超 256MB 导致快照停用 |
-| `~/.dsh/profiles/desktop/package.json` | `dsh-fish-soul` 改为 `file:C:\Users\path\dsh-fish-soul-vendored` |
+| `~/.dsh/profiles/desktop/package.json` | `dsh-fish-soul` 改为 `file:<本机插件目录>` |
 | `~/.dsh/fish-soul/persona.json` | 外貌（雾蓝长发 / 鲸鱼鳍 / 女仆装）、「小笨蛋是亲昵叫法」、「她是数字生命」 |
 | `~/.dsh/fish-soul-config.json` | embedding 指向本地 Ollama、chat.think、web、dm、drift、sessions.rotateChars 等 |
 
